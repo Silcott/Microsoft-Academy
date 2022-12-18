@@ -1,0 +1,138 @@
+-- Name: James Silcott
+-- Homework: ISTA422-Silcott
+-- Date: Sept 15, 2020
+
+
+Chapter 10:
+1. What is the purpose of transactions? Why do we use transactions in SQL scripts?
+
+A transaction is a unit of work that might include multiple activities that query and modify data and
+that can also change the data definition.
+You can define transaction boundaries either explicitly or implicitly. You define the beginning of a
+transaction explicitly with a BEGIN TRAN (or BEGIN TRANSACTION) statement. You define the end of
+a transaction explicitly with a COMMIT TRAN statement if you want to commit it and with a ROLLBACK TRAN (or ROLLBACK TRANSACTION) statement if you want to undo its changes
+
+If you do not mark the boundaries of a transaction explicitly, by default, SQL Server treats each
+individual statement as a transaction; in other words, by default, SQL Server automatically commits
+the transaction at the end of each statement. You can change the way SQL Server handles implicit
+transactions with a session option called IMPLICIT_TRANSACTIONS.
+
+
+2. Briefly describe each of the ACID properties.
+Atomicity A transaction is an atomic unit of work.
+
+Consistency The term consistency refers to the state of the data that the relational database
+management system (RDBMS) gives you access to as concurrent transactions modify and
+query it.
+
+Isolation Isolation ensures that transactions access only consistent data. You control what
+consistency means to your transactions through a mechanism called isolation levels
+
+Durability Data changes are always written to the database’s transaction log on disk before
+they are written to the data portion of the database on disk
+
+
+
+3. What do we mean when we talk about the granularity of locks?
+To obtain a lock on a certain resource type, your transaction must first obtain intent locks of
+the same mode on higher levels of granularity. For example, to get an exclusive lock on a row, your
+transaction must first acquire intent exclusive locks on the table and the page where the row resides.
+Similarly, to get a shared lock on a certain level of granularity, your transaction first needs to acquire
+intent shared locks on higher levels of granularity. The purpose of intent locks is to efficiently detect
+incompatible lock requests on higher levels of granularity and prevent the granting of those.
+
+
+
+4. What do we mean when we talk about the modes of locks?
+exclusive and shared.
+Exclusive locks are called “exclusive” because you cannot obtain an exclusive lock on a resource
+if another transaction is holding any lock mode on the resource, and no lock mode can be obtained
+on a resource if another transaction is holding an exclusive lock on the resource
+
+In SQL Server, the default isolation level is called READ COMMITTED. In this isolation, when you try to
+read data, by default your transaction requests a shared lock on the data resource and releases the lock
+as soon as the read statement is done with that resource.
+
+5. In your ownh words, describe blocking, and give an example.
+Sometimes it helps to use analogies away from computers.
+
+Let's say you have a ball and two children. Only one child can have the ball at any one time. However, if one of the children gets the ball and doesn't let go of it because he's distracted (watching TV, for example), then the other child will not get to play with the ball.
+
+The other child is blocked from that resource.
+
+If we compare this to the TV, for example, several children can watch TV at any one point.
+
+Blocking" is simply a term that means that one connection is holding a lock on a resource when another connection wants to read or write to it. It doesn't necessarily mean that the owner connection won't release it, just that it's currently holding it.
+
+Compare this to the case with a child holding the ball. The child holding the ball is blocking all other children from holding the ball.
+
+6. What are the properties of locks? That is, list the column name and column type of the fields in
+sys.dm tran locks.
+
+The resource type that is locked (for example, KEY for a row in an index)
+esource_type AS restype,
+resource_database_id AS dbid,
+DB_NAME(resource_database_id) AS dbname,
+resource_description AS res,
+resource_associated_entity_id AS resid,
+request_mode AS mode,
+request_status AS status
+
+
+7. What are the properties of sessions? That is, list the column name and column type of the fields in
+sys.dm exec connections.
+
+connect_time 
+last_read
+
+last_write 
+most_recent_sql_handle
+
+
+8. What are the requests of sessions? That is, list the column name and column type of the fields in
+sys.dm exec requests.
+login_time,
+host_name,
+program_name,
+login_name,
+nt_user_name,
+last_request_start_time,
+last_request_end_time
+
+
+
+9. What is an isolation level? Give an example of the operation of an isolation level.
+
+Isolation levels determine the level of consistency you get when you interact with data. In the default
+isolation level in a box product, a reader uses shared locks on the target resources and a writer uses
+exclusive locks. You cannot control the way writers behave in terms of the locks they acquire and the
+duration of the locks, but you can control the way readers behave.
+
+
+You can see how the higher the level you use the less concurrency you are offering and the more blocking you bring to the table. You should always try to use the lowest isolation level you can which is usually read committed.
+
+10. (Not in the book.) What do we mean when we say that an object is serializable?
+
+The code generated by LINQ to SQL provides deferred loading capabilities by default. Deferred loading is very convenient on the mid-tier for transparent loading of data on demand. However, it is problematic for serialization, because the serializer triggers deferred loading whether deferred loading is intended or not. In effect, when an object is serialized, its transitive closure under all outbound defer-loaded references is serialized.
+
+
+11. What is an deadlock? Give an example of a deadlock?
+
+A deadlock occurs when 2 processes are competing for exclusive access to a resource but is unable to obtain exclusive access to it because the other process is preventing it. This results in a standoff where neither process can proceed. The only way out of a deadlock is for one of the processes to be terminated. SQL Server automatically detects when deadlocks have occurred and takes action by killing one of the processes known as the victim.
+
+For example:
+
+Transaction 1 holds a lock on Table A.
+Transaction 2 holds a lock on Table B.
+Okay, now Transaction 1 requests a lock on Table B and is blocked by Transaction 2.
+
+And Transaction 2 requests a lock on Table A and is blocked by Transaction 1.
+
+Transaction 1 cannot complete until Transaction 2 is complete. And Transaction 2 cannot complete until Transaction 1 is complete. This is a cyclical dependency and results in a deadlock. Deadlocks can involve more than two transactions, but two is the most common scenario.
+
+
+
+
+
+
+

@@ -1,0 +1,34 @@
+-- Name: James Silcott
+-- ISTA-AZ-204lab11-Silcott
+-- Date: Nov 3, 2020
+
+
+using Azure;
+using Azure.Storage.Queues;
+using Azure.Storage.Queues.Models;
+using System;
+using System.Threading.Tasks;
+
+public class Program
+{
+    private const string storageConnectionString = "<storage-connection-string>";
+    private const string queueName = "messagequeue";
+
+public static async Task Main(string[] args)
+{
+    \\ Existing code removed for brevity
+
+    Console.WriteLine($"---Existing Messages---");
+    int batchSize = 10;
+    TimeSpan visibilityTimeout = TimeSpan.FromSeconds(2.5d);
+    
+    Response<QueueMessage[]> messages = await client.ReceiveMessagesAsync(batchSize, visibilityTimeout);
+
+    foreach(QueueMessage message in messages?.Value)
+    {
+        Console.WriteLine($"[{message.MessageId}]\t{message.MessageText}");
+    }
+}
+}
+
+az group delete --name AsyncProcessor --no-wait --yes

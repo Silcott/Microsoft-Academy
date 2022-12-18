@@ -1,0 +1,119 @@
+-- Name: James Silcott
+-- File: HW24
+-- Date: 14 Oct 2020
+
+ 
+chapter 24
+1. What are the two scenarios in which you can use PLINQ to speed up operations? Why does using
+PLINQ in these scenarios speed up processing?
+ideal for scenarios that involve data sets with large numbers of elements, or if the criteria specified 
+for matching data involve complex, computationally expensive operations.
+
+PLINQ works by dividing a data set into partitions and then using tasks to retrieve the data that
+matches the criteria specifi ed by the query for each partition in parallel.
+
+
+
+2. How does AsParallel qualify as an extension method? First, explain what an extension method is and
+how you define entension methods, and them explain why AsParallel qualifies as an extension method.
+
+The AsParallel method returns a ParallelQuery
+object that acts similarly to the original enumerable object, except that it provides parallel implemen-
+tations of many of the LINQ operators, such as join and where
+
+These implementations of the LINQ operators are based on tasks and use various algorithms to try to run parts of your LINQ query in paral-
+lel wherever possible. However, as ever in the world of parallel computing, the AsParallel method is not
+magic. You cannot guarantee that your code will speed up; it all depends on the nature of your LINQ queries and whether the tasks they are 
+performing lend themselves to parallelization.
+
+
+
+3. How do you cancel a PLINQ query before it finishes? Be specific with respect to the variables and
+methods used for the cancellation operation, and how the variables abd methods are used.
+
+specify a
+CancellationToken object from a CancellationTokenSource and use the WithCancellation extension
+method of the ParallelQuery.
+CancellationToken tok = ...;
+...
+var orderInfoQuery =
+from c in
+CustomersInMemory.Customers.AsParallel().WithCancellation(tok)
+join o in OrdersInMemory.Orders.AsParallel()
+on ...
+You specify WithCancellation only once in a query
+
+
+
+4. Why is it important to synchronize concurrent access to a server? Give an example of a specific
+condition that will cause an error in your application if concurrent access is not synchronized.
+
+you need to be
+careful when building solutions that perform concurrent operations, especially if those operations share access to data. You have little control over how parallel operations are scheduled or even the
+degree of parallelism that the operating system might provide to an application constructed by using
+tasks. These decisions are left as run-time considerations and depend on the workload and hardware capabilities of the computer running your application. This level of abstraction was a deliberate
+design decision on the part of the Microsoft development team, and it removes the need for you to
+understand the low-level threading and scheduling details when you build applications that require
+concurrent tasks. But
+
+
+5. What does the lock statement do?
+
+The C# language provides locking semantics through the lock keyword, which you can use to guaran-
+tee exclusive access to resources. You use the lock keyword like this:
+object myLockObject = new object();
+...
+lock (myLockObject)
+{
+// Code that requires exclusive access to a shared resource
+...
+}
+The lock statement attempts to obtain a mutual-exclusion lock over the specifi ed object (you can
+actually use any reference type, not just object), and it blocks if this same object is currently locked by
+another thread.
+
+6. This is not in the book. Define mutex, define semaphore, and explain the difference between them.
+n computer programming, a mutual exclusion object (mutex) is a program object that allows multiple 
+program threads to share the same resource, such as file access, but not simultaneously. 
+When a program is started, a mutex is created with a unique name. After this stage, any thread 
+that needs the resource must lock the mutex from other threads while it is using the resource. 
+The mutex is set to unlock when the data is no longer needed or the routine is finished.
+
+Strictly speaking, a mutex is locking mechanism used to synchronize access to a resource. 
+Only one task (can be a thread or process based on OS abstraction) can acquire the mutex. 
+It means there is ownership associated with mutex, and only the owner can release the lock (mutex).
+
+Semaphore is signaling mechanism (“I am done, you can carry on” kind of signal). For example, 
+if you are listening songs (assume it as one task) on your mobile and at the same time your 
+friend calls you, an interrupt is triggered upon which an interrupt service routine (ISR) 
+signals the call processing task to wakeup.
+
+7. What does it mean to say that some collection classes are not thread safe? Explain how not being
+thread safe may lead one of these collection classes to produce a malfunction in the program.
+
+r, this process is potentially prone to
+error and not very scalable
+
+
+
+
+8. Explain how thread safe collection classes are made thread safe.
+.NET Framework class library includes a small set of thread-safe col-
+lection classes and interfaces in the System.Collections.Concurrent namespace that is designed specifi -
+cally for use with tasks.
+
+
+
+
+9. Why are thread safe classes slower than non-thread safe classes? Be specific
+
+
+Adding thread safety to the methods in a collection class imposes additional run-time overhead, so these classes are not as fast as the regular collection classes. You need to keep
+this fact in mind when deciding whether to parallelize a set of operations that require access
+to a shared collection
+
+
+
+
+
+

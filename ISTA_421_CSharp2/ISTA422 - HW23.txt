@@ -1,0 +1,112 @@
+-- Name: James Silcott
+-- File: HW23
+-- Date: 7 Oct 2020
+
+ 
+chapter 23, pages 517 – 558 i
+
+1 List two reasons for multitasking, and explain the rationale for them.
+
+■ To improve responsiveness A long-running operation may involve tasks that do not require processor time.
+
+■ To improve scalability If an operation is CPU bound, you can improve scalability by making effi cient use of the processing resources available and using these resources to reduce the
+time required to execute the operation.
+
+
+2 Explain Moore’s law. What does Moore’s law have to do with multitasking?
+Moore’s Law, which states that the number of transistors
+that can be placed inexpensively on an integrated circuit will increase exponentially, doubling approxi-
+mately every two years.
+
+The ability to pack transistors together led to the ability to pass data between them more quickly. This
+meant we could expect to see chip manufacturers produce faster and more powerful microprocessors
+at an almost unrelenting pace, enabling software developers to write ever more complicated software that would run more quickly.
+
+
+3 In UWP, what namespace is used as the container for the multitasking methods?
+the Thread
+class is not available
+use the Task class.
+
+The Task class provides a powerful abstraction for threading with which you can easily distinguish
+between the degree of parallelization in an application (the tasks) and the units of parallelization (the threads).
+
+4 What is the difference between tasks and threads? Explain.
+Here are some differences between a task and a thread.
+The Thread class is used for creating and manipulating a thread in Windows. 
+A Task represents some asynchronous operation and is part of the Task Parallel Library, a set of APIs for running tasks asynchronously and in parallel.
+The task can return a result. There is no direct mechanism to return the result from a thread.
+Task supports cancellation through the use of cancellation tokens. But Thread doesn't.
+A task can have multiple processes happening at the same time. Threads can only have one task running at a time.
+We can easily implement Asynchronous using ’async’ and ‘await’ keywords.
+A new Thread()is not dealing with Thread pool thread, whereas Task does use thread pool thread.
+A Task is a higher level concept than Thread.
+
+5 What is the ThreadPool?
+a thread pool maintains multiple threads waiting for tasks to be allocated for concurrent execution by the supervising program. 
+By maintaining a pool of threads, the model increases performance and avoids latency in execution due to frequent creation and 
+destruction of threads for short-lived tasks.[2] The number of available threads is tuned to the computing resources available 
+to the program, such as a parallel task queue after completion of execution.
+
+
+
+6 What parameters does the Task() constructor take?
+You can create Task objects by using the Task constructor. The Task constructor is overloaded, but all
+versions expect you to provide an Action delegate as a parameter
+
+
+
+7 How do you start a thread?
+
+After you create a Task object, you can set it running by using the Start method, like this: thread.Start();
+Creating and running a task is a very common process, and the Task class provides the static Run
+method with which you can combine these operations. The Run method takes an Action delegate
+specifying the operation to perform (like the Task constructor) but starts the task running immediately
+
+8 What is the difference between the Start() and Run() methods?
+The Start method is overloaded, and you can optionally specify a TaskCreationOptions object to
+provide hints about how to schedule and run the task.
+Creating and running a task is a very common process, and the Task class provides the static Run
+method with which you can combine these operations. The Run method takes an Action delegate
+specifying the operation to perform (like the Task constructor) but starts the task running immediately.
+
+
+9 What is the difference between creating independent tasks with Tasks and paralleliztion with Parallel?
+Explain.
+By using the Task class, you have complete control over the number of tasks your application creates.
+ However, you had to modify the design of the application to accommodate the use of Task objects. You
+also had to add code to synchronize operations; the application can render the graph only when all the
+tasks have completed. In a complex application, the synchronization of tasks can become a nontrivial
+process that is easily prone to mistakes.
+With the Parallel class, you can parallelize some common programming constructs without having to
+ redesign an application. Internally, the Parallel class creates its own set of Task objects, and 
+ it synchronizes these tasks automatically when they have completed. The Parallel class is located in the
+System.Threading.Tasks namespace and provides a small set of static methods that you can use to
+indicate that code should be run in parallel if possible.
+
+
+
+
+
+10 Explain how manual cancellation works using a cancellation token.
+
+Cooperative cancellation is based on the notion of a cancellation token. A cancellation token is a
+structure that represents a request to cancel one or more tasks. The method that a task runs should
+ include a System.Threading.CancellationToken parameter. An application that wants to cancel the task
+sets the Boolean IsCancellationRequested property of this parameter to true. The method running
+in the task can query this property at various points during its processing. If this property is set to
+true at any point, it knows that the application has requested that the task be canceled. Also, the
+method knows what work it has done so far, so it can undo any changes if necessary and then fi nish
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,17 @@
+-- Name: James Silcott
+-- ISTA-AZ-204lab08-Silcott
+-- Date: Nov 3, 2020
+
+http://httpapi*[yourname]*.azurewebsites.net, the new value will be http://httpapi*[yourname]*.azurewebsites.net/headers
+
+<outbound>
+    <base />
+</outbound>
+
+
+<outbound>
+    <base />
+    <xml-to-json kind="direct" apply="always" consider-accept-header="false" />
+</outbound>
+
+az group delete --name ApiService --no-wait --yes

@@ -1,0 +1,91 @@
+-- Name: James Silcott
+-- File: ASP.NET
+-- Date: 30 Sept 2020
+
+
+Chapter 10
+1. What is Blazor?
+use Blazor to create administration features. Blazor is a new addition to ASP.NET Core, and it combines
+client-side JavaScript code with server-side code executed by ASP.NET Core, connected by a persistent HTTP connection. I describe
+Blazor in detail in Chapters 32–35, but it is important to understand that the Blazor model is not suited to all projects
+
+
+
+2. What do the methods AddServerSideBlazor() and MapBlazorHub() do?
+
+The AddServerSideBlazor method creates the services that Blazor uses, and the MapBlazorHub method registers the Blazor
+middleware components. The final addition is to finesse the routing system to ensure that Blazor works seamlessly with the rest of
+the application.
+
+
+3. Where are Blazor files conventionally located?
+
+Blazor requires its own imports file to specify the namespaces that it uses. Create the Pages/Admin folder and add to it a file named
+_Imports.razor with the content shown in Listing 10-2. (If you are using Visual Studio, you can use the Razor Components template
+to create this file.)
+he conventional location for Blazor files is within the Pages folder, but Blazor files can be defined anywhere in the project. In
+Part 4, for example, I used a folder named Blazor to help emphasize which features were provided by Blazor and which by Razor Pages.
+
+4. What is the purpose of the Routed.razor file?
+component element is used to insert a Razor Component in the output from the Razor Page. Razor Components are the
+confusingly named Blazor building blocks, and the component element applied in Listing 10-3 is named Routed and will be created
+shortly. The Razor Page also contains a script element that tells the browser to load the JavaScript file that Blazor Server uses. Requests
+for this file are intercepted by the Blazor Server middleware, and you don’t need to explicitly add the JavaScript file to the project.
+
+
+
+5. (Not in book) What is the purpose of the <NavLink> element, and what does it do?
+
+Blazor also includes a component for rendering hyperlinks with additional support for changing the HTML element’s CSS class when address matches the URL.
+
+
+6. What is the purpose of an @code { ... } block? Where are they located and what is their purpose?
+Razor Components, as the name suggests, rely on the Razor approach to annotated HTML elements. The view part of the
+component is supported by the statements in the @code section. The @code section in this component defines four properties that
+are decorated with the Parameter attribute, which means the values will be provided at runtime by the parent component, which
+I will create shortly. The values provided for the parameters are used in the view section of the component to display details of a
+sequence of Order objects.
+
+
+
+7. How can a single component be configured to present two different sets of data without the need to
+duplicate code and content?
+
+The values assigned to the OrderTable element’s attributes are used to set the properties decorated with the Parameter
+attribute in Listing 10-10. In this way, a single component can be configured to present two different sets of data without the need to
+duplicate code and content
+
+
+8. What is CRUD? What are the equivalent SQL statements?
+Together, these interfaces allow a user to create, read, update, and delete items in the collection. Collectively, these actions are
+known as CRUD.
+
+
+
+
+9. Does Blazor use the same approach to validation as the rest of ASP.NET Core? If not, how is Blazor
+different?
+
+Blazor uses the same approach to validation as the rest of ASP.NET Core but, as you will see, applies it a different way to deal
+with the more interactive nature of Razor Components.
+
+
+10. What is the purpose of the Inject attribute?
+
+The component uses the Inject attribute to declare that it requires an implementation of the IStoreRepository interface,
+which is one of the ways that Blazor provides access to the application’s services. The value of the Id property will be populated from
+the URL that has been used to navigate to the component, which is used to retrieve the Product object from the database
+
+
+
+11. What is the NavigationManager class? What does it do?
+
+Blazor also provides the NavigationManager class, which is used to programmatically navigate between components without
+triggering a new HTTP request. The Editor component uses NavigationManager, which is obtained as a service, to return to the
+Products component after the database has been updated.
+
+
+
+
+
+

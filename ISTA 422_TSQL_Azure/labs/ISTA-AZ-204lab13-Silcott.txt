@@ -1,0 +1,49 @@
+-- Name: James Silcott
+-- ISTA-AZ-204lab13-Silcott
+-- Date: Nov 3, 2020
+
+
+At the Cloud Shell command prompt in the portal, perform the following actions:
+
+Enter the following command, and then select Enter to get a list of subgroups and commands at the root level of the Azure CLI:
+
+az --help
+Enter the following command, and then select Enter to get a list of the commands that are available for resource providers:
+
+az provider --help
+Enter the following command, and then select Enter to list all currently registered providers:
+
+az provider list
+Enter the following command, and then select Enter to list just the namespaces of the currently registered providers:
+
+az provider list --query "[].namespace"
+Observe the list of currently registered providers. The Microsoft.CDN provider isn't currently in the list of providers.
+
+Enter the following command, and then select Enter to get the required flags to register a new provider:
+
+az provider register --help
+Enter the following command, and then select Enter to register the Microsoft.CDN namespace with your current subscription:
+
+az provider register --namespace Microsoft.CDN
+
+
+Construct a URL for the campus.jpg resource by combining the Endpoint hostname URL from the cdnmedia[yourname]** endpoint that you copied earlier in the lab with a relative path of /campus.jpg.
+
+Note: For example, if your Endpoint hostname URL is https://cdnmediastudent.azureedge.net/, your newly constructed URL would be https://cdnmediastudent.azureedge.net/campus.jpg.
+
+Construct a URL for the conference.jpg resource by combining the Endpoint hostname URL from the cdnmedia[yourname]** endpoint that you copied earlier in the lab with a relative path of /conference.jpg.
+
+Note: For example, if your Endpoint hostname URL is https://cdnmediastudent.azureedge.net/, your newly constructed URL would be https://cdnmediastudent.azureedge.net/conference.jpg.
+
+Construct a URL for the poster.jpg resource by combining the Endpoint hostname URL from the cdnmedia[yourname]** endpoint that you copied earlier in the lab with a relative path of /poster.jpg.
+
+Note: For example, if your Endpoint hostname URL is https://cdnmediastudent.azureedge.net/, your newly constructed URL would be https://cdnmediastudent.azureedge.net/poster.jpg.
+
+Construct a URL for the welcome.mp4 resource by combining the Endpoint hostname URL from the cdnvideo[yourname]** endpoint that you copied earlier in the lab with a relative path of /welcome.mp4.
+
+Note: For example, if your Endpoint hostname URL is https://cdnvideostudent.azureedge.net/, your newly constructed URL would be https://cdnvideostudent.azureedge.net/welcome.mp4.
+
+Enter the following command, and then select Enter to delete the MarketingContent resource group:
+
+az group delete --name MarketingContent --no-wait --yes
+Close the Cloud Shell pane in the portal.

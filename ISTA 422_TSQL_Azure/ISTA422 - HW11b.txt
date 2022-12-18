@@ -1,0 +1,162 @@
+-- Name: James Silcott
+-- File: TSQL
+-- Date: 30 Sept 2020
+
+ 
+
+
+
+1. What is dynamic SQL?
+
+With SQL Server, you can construct a batch of T-SQL code as a character string and then execute that
+batch. This capability is called dynamic SQL. SQL Server provides two ways of executing dynamic SQL:
+using the EXEC (short for EXECUTE) command, and using the sp_executesql stored procedure
+
+
+
+2. In executing dynamic SQL, what are the differences between using the EXEC command and the
+sp executesp stored procedure?
+The sp_executesql stored procedure is an alternative tool to the EXEC command for executing dynamic
+SQL code. It’s more secure and more flexible in the sense that it has an interface; that is, it supports
+input and output parameters. Note that unlike EXEC, sp_executesql supports only Unicode character
+strings as the input batch of code.
+
+
+
+3. What is a SQL injection attack? Give an example of an attack.
+Be extremely careful when concatenating user input as part of your code. Hackers can attempt to inject code you did not intend to run. The best measure you can take against
+SQL injection is to avoid concatenating user input as part of your code (for example, by
+using parameters). If you do concatenate user input as part of your code, make sure you
+thoroughly inspect the input and look for SQL injection attempts
+
+
+4. How do you execute the EXEC command? Write a complete example using the TSQLV4 database.
+DECLARE @sql AS VARCHAR(100);
+SET @sql = 'PRINT ''This message was printed by a dynamic SQL batch.'';';
+EXEC(@sql);
+
+
+5. Describe the use of input parameters and output parameters for the sp executesql stored procedure.
+The fact that you can use input and output parameters in your dynamic SQL code can help you write
+more secure and more efficient code. In terms of security, parameters that appear in the code cannot
+be considered part of the code—they can only be considered operands in expressions. So, by using
+parameters, you can eliminate your exposure to SQL injection.
+
+
+6. What are the three kinds of routines that T-SQL recognizes?
+User-defined functions
+The purpose of a user-defined function (UDF) is to encapsulate logic that calculates something,
+possibly based on input parameters, and return a result
+
+Stored procedures
+Stored procedures are routines that encapsulate code. They can have input and output parameters,
+they can return result sets of queries, and they are allowed to have side effects. Not only can you
+modify data through stored procedures, you can also apply schema changes through them.
+
+Triggers
+A trigger is a special kind of stored procedure—one that cannot be executed explicitly. Instead, it’s
+attached to an event. Whenever the event takes place, the trigger fires and the trigger’s code runs. SQL
+Server supports the association of triggers with two kinds of events: data manipulation events (DML
+triggers) such as INSERT, and data definition events (DDL triggers) such as CREATE TABLE.
+
+
+7. What is the difference between a stored procedure, a user defined function, and a trigger?
+User-defined functions
+The purpose of a user-defined function (UDF) is to encapsulate logic that calculates something,
+possibly based on input parameters, and return a result
+
+Stored procedures
+Stored procedures are routines that encapsulate code. They can have input and output parameters,
+they can return result sets of queries, and they are allowed to have side effects. Not only can you
+modify data through stored procedures, you can also apply schema changes through them.
+
+Triggers
+A trigger is a special kind of stored procedure—one that cannot be executed explicitly. Instead, it’s
+attached to an event. Whenever the event takes place, the trigger fires and the trigger’s code runs. SQL
+Server supports the association of triggers with two kinds of events: data manipulation events (DML
+triggers) such as INSERT, and data definition events (DDL triggers) such as CREATE TABLE
+
+
+8. What is the primary function of a UDF? This is not specifically stated in the book but is clear fro the
+context of the discussion n the book.
+The purpose of a user-defined function (UDF) is to encapsulate logic that calculates something,
+possibly based on input parameters, and return a result.
+
+
+9. (Not in book.) What are side effects, and why are they dangerous?
+UDFs are not allowed to have any side effects
+
+
+10. What is the principle distinction between a UDF and a stored procedure?
+The purpose of a user-defined function (UDF) is to encapsulate logic that calculates something,
+possibly based on input parameters, and return a result.
+Stored procedures are routines that encapsulate code. They can have input and output parameters,
+they can return result sets of queries, and they are allowed to have side effects
+
+11. Given that you cannot execute a trigger explicitly, what is the advantage of using triggers?
+A trigger is a special kind of stored procedure—one that cannot be executed explicitly. Instead, it’s
+attached to an event. Whenever the event takes place, the trigger fires and the trigger’s code runs. SQL
+Server supports the association of triggers with two kinds of events: data manipulation events (DML
+triggers) such as INSERT, and data definition events (DDL triggers) such as CREATE TABLE.
+You can use triggers for many purposes, including auditing, enforcing integrity rules that cannot be
+enforced with constraints, and enforcing policies.
+
+
+12. In using error handling in T-SQL, can you mimic a finally block? If so, how?
+The main tool used for error handling is a construct called TRY. . .CATCH. SQL Server also provides a set of functions you can
+invoke to get information about the error
+
+The finally_clause of a TRY statement will always be executed regardless of errors or other execution branch statements,
+
+13. Write a user defined function that returns a Booleans as to whether a customer may purchase alcohol
+as of the instant that the function runs.
+DROP FUNCTION IF EXISTS dbo.Getalcohol;
+GO
+CREATE FUNCTION dbo.Getalcohol
+(
+@alcohol AS BOOL,
+)
+RETURNS BOOL
+AS
+BEGIN
+RETURN
+alcohol
+THEN 1 ELSE 0
+END;
+END;
+GO
+
+14. Write a trigger that places a customer in the OFF LIMITS table if he attempt to purchase alcohol
+when he is underage.
+
+DROP PROC IF EXISTS alcohol;
+GO
+CREATE PROC alcohol
+@alcohol AS INT,
+AS
+SET NOCOUNT ON;
+SELECT orderid, custid, empid, orderdate
+FROM alcohol
+WHERE custid = @custid
+SET 
+GO
+
+15. Write a stored procedure that deletes customers from the OFF LIMITS table when they have reached
+their 21st birthday
+
+DROP PROC IF EXISTS Sales.GetCustomerOrders;
+GO
+CREATE PROC Sales.GetCustomerOrders
+@custid AS INT,
+@fromdate AS DATETIME = '19000101',
+@todate AS DATETIME = '99991231',
+@numrows AS INT OUTPUT
+AS
+SET NOCOUNT ON;
+SELECT orderid, custid, empid, orderdate
+FROM Sales.Orders
+WHERE custid = @custid
+AND orderdate >= @fromdate
+AND orderdate < @todate;
+SET @numrows = @@rowcount;
+GO

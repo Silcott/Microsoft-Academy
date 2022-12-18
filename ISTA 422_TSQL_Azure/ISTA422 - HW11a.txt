@@ -1,0 +1,186 @@
+-- Name: James Silcott
+-- File: ISTA422
+-- Date: Sep 27, 2020
+
+
+Chapter 11a
+ISTA-420, T-SQL Fundamentals
+Read T-SQL Fundamentals, Third Edition, pages 361 — 379, and answer the following questions.
+1. Why do we use variables in T-SQL? How do you declare and initialize T-SQL variables? Can you
+declare and initialize a variable in a single step?
+
+You use variables to temporarily store data values for later use in the same batch in which they were
+declared. I describe batches later in this chapter, but for now, the important thing for you to know is
+that a batch is one T-SQL statement or more sent to Microsoft SQL Server for execution as a single unit.
+
+Use a DECLARE statement to declare one or more variables, and use a SET statement to assign a
+value to a single variable. For example, the following code declares a variable called @i of an INT data type and assigns it the value 10:
+DECLARE @i AS INT;
+SET @i = 10;
+Alternatively, you can declare and initialize a variable in the same statement, like this:
+DECLARE @i AS INT = 10;
+
+2. Why is the assignment SET method for setting a variable safer than the assignment SELECT method?
+
+The SET statement is safer than the assignment SELECT because it requires you to use a scalar
+subquery to pull data from a table. Remember that a scalar subquery fails at run time if it returns more
+than one value. For example, the following code fails:
+DECLARE @empname AS NVARCHAR(61);
+SET @empname = (SELECT firstname + N' ' + lastname
+FROM HR.Employees
+WHERE mgrid = 2);
+SELECT @empname AS empname;
+Because the variable was not assigned a value, it remains NULL, which is the default for variables
+that were not initialized. This code returns the following output:
+Msg 512, Level 16, State 1, Line 71
+Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <,
+<= , >, >= or when the subquery is used as an expression.
+empname
+--------
+NUL
+
+
+
+3. Describe what is meant by a batch file in T-SQL? What is the difference between batches and transactions?
+
+A batch is one or more T-SQL statements sent by a client application to SQL Server for execution as a
+single unit. The batch undergoes parsing (syntax checking), resolution/binding (checking the existence
+of referenced objects and columns, permissions checking), and optimization as a unit.
+Don’t confuse transactions and batches. A transaction is an atomic unit of work. A batch can have
+multiple transactions, and a transaction can be submitted in parts as multiple batches. When a transaction is canceled or rolled back, SQL Server undoes the partial activity that has taken place since the
+beginning of the transaction, regardless of where the batch began.
+
+
+
+4. Can a transaction be split between multiple batches? Can a batch be split between multiple transactions? Explain.
+
+A batch can have
+multiple transactions, and a transaction can be submitted in parts as multiple batches. When a transaction is canceled or rolled back, SQL Server undoes the partial activity that has taken place since the
+beginning of the transaction, regardless of where the batch began.
+
+
+5. What is meant when the book says that “a batch is a unit of resolution?” Explain binding.
+
+A batch is a unit of resolution (also known as binding). This means that checking the existence of
+objects and columns happens at the batch level. Keep this fact in mind when you’re designing batch
+boundaries. When you apply schema changes to an object and try to manipulate the object data in the
+same batch, SQL Server might not be aware of the schema changes yet and fail the data- manipulation
+statement with a resolution error. I’ll demonstrate the problem through an example and then
+recommend best practices.
+Run the following code to create a table called T1 in the current database, with one column called
+col1:
+DROP TABLE IF EXISTS dbo.T1;
+CREATE TABLE dbo.T1(col1 INT);
+Next, try to add a column called col2 to T1 and query the new column in the same batch:
+ALTER TABLE dbo.T1 ADD col2 INT;
+SELECT col1, col2 FROM dbo.T1;
+Even though the code might seem to be perfectly valid, the batch fails during the resolution phase
+with the following error:
+Msg 207, Level 16, State 1, Line 130
+Invalid column name 'col2'.
+At the time the SELECT statement was resolved, T1 had only one column, and the reference to the
+col2 column caused the error. One best practice you can follow to avoid such problems is to separate
+data-definition language (DDL) and Data-Manipulation Language (DML) statements into different
+batches, as in the following example:
+ALTER TABLE dbo.T1 ADD col2 INT;
+GO
+SELECT col1, col2 FROM dbo.T1;
+
+
+6. What is the scope of variables with respect to T-SQL batches?
+
+
+
+
+7. Give a practical example of the use of the GO n operator that is not in the book.
+
+get around the problem, separate the DROP VIEW and CREATE VIEW statements into different
+batches by adding a GO command after the DROP VIEW statement
+
+8. How to you delimit if ...else constructions that contain multiple statements?
+If you need to run more than one statement in the IF or ELSE sections, you need to use a statement
+block. You mark the boundaries of a statement block with the BEGIN and END keywords.
+
+
+9. Does T-SQL provide a SWITCH ...CASE type of construct? See chapter 2 if you don’t recall. If it
+exists, is it interchangeable with the if ...else construct?
+
+no
+
+
+
+10. What is the difference between a relation and a cursor?
+a query without an ORDER BY clause returns a set
+(or a multiset), whereas a query with an ORDER BY clause returns what standard SQL calls a cursor—a
+nonrelational result with order guaranteed among rows.
+
+when you use cursors you pretty much go against the relational model,
+which is based on set theory
+
+11. What are the specific steps to use a cursor? List the steps.
+Working with a cursor generally involves the following steps:
+1. Declare the cursor based on a query.
+2. Open the cursor.
+3. Fetch attribute values from the first cursor record into variables.
+4. As long as you haven’t reached the end of the cursor (while the value of a function called
+@@FETCH_STATUS is 0), loop through the cursor records; in each iteration of the loop, perform
+the processing needed for the current row, and then fetch the attribute values from the next
+row into the variables.
+5. Close the cursor.
+6. Deallocate the cursor.
+
+
+
+12. What is the scope of a local temporary table?
+
+A local temporary table is visible only to the session that created it, in the creating level and all inner
+levels in the call stack (inner procedures, triggers, and dynamic batches). A local temporary table is
+destroyed automatically by SQL Server when the creating level in the call stack goes out of scope.
+
+
+13. When are global temporary tables destroyed? What is the main difference between local temporary
+tables and global temporary tables?
+When you create a global temporary table, it’s visible to all other sessions. Global temporary tables are destroyed automatically by SQL Server when the creating session disconnects and there are no
+active references to the table. You create a global temporary table by naming it with two pound signs
+as a prefix, such as ##T1.
+Global temporary tables are useful when you want to share temporary data with everyone. No
+special permissions are required, and everyone has full DDL and DML access. Of course, the fact that
+everyone has full access means that anyone can change or even drop the table, so consider the alterna-
+tives carefully.
+
+
+14. Under what conditions would you use a table variable instead of a local temporary table? Why would
+you refer to use a local temporary table instead of a table variable?
+
+Like local temporary
+tables, table variables are visible only to the creating session, but because they are variables they have
+a more limited scope: only the current batch. Table variables are visible neither to inner batches in the
+call stack nor to subsequent batches in the session.
+
+
+
+
+
+
+
+15. What is a table type? What is the syntax for creating a table type? Whhat is the syntax for using a
+table type?
+
+
+You can use a table type to preserve a table definition as an object in the database. Later you can reuse
+it as the table definition of table variables and input parameters of stored procedures and user-defined
+functions. Table types are required for table-valued parameters (TVPs)
+
+
+
+For example, the following code creates a table type called dbo.OrderTotalsByYear in the current
+database:
+DROP TYPE IF EXISTS dbo.OrderTotalsByYear;
+CREATE TYPE dbo.OrderTotalsByYear AS TABLE
+(
+orderyear INT NOT NULL PRIMARY KEY,
+qty INT NOT NULL
+);
+
+
+

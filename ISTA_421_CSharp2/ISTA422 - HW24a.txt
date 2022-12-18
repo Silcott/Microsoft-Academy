@@ -1,0 +1,83 @@
+-- Name: James Silcott
+-- File: HW24
+-- Date: 14 Oct 2020
+
+ 
+chapter 24
+
+1. What is an asynchronous method? When the book talks about a contract, what is the contract and
+who is it with?
+It knows when to return
+
+
+
+
+2. What can be the problem with decomposing a series of discrete method calls into a set of tasks, such
+as we saw in chapter 23?
+interface freezes and will become unresponsive
+
+
+3. What can be the problem with decomposing a series of discrete method calls into a set of continuations?
+When does the last continuation “complete” as compared to the previous continuations? What problem
+might this cause?
+break the thread up in tasks but it doesn't know what is happening
+
+
+4. What might be the problem with implementing te previous solution as a continuation passing a delegate? What would be your interpretation with this error message: “The application called an interface
+that was marshaled for a different thread.”?
+
+
+
+5. The book suggests a solution using a continuation delegate calling another continuation delegate via
+an anonymous function. What does the book ientify as a problem with this suggested solution?
+
+
+
+6. What does the async modifier do? What does the await operator do?
+async and await keywords in C# is to enable you to defi ne and call methods
+that can run asynchronously. This means that you don’t have to concern yourself with specifying
+continuations or scheduling code to run on Dispatcher objects to ensure that data is manipulated 
+on the correct thread.
+
+The async modifier indicates that a method contains functionality that can be run
+asynchronously.
+
+The await operator specifies the points at which this asynchronous functionality should be performed.
+
+
+7. What is an awaitable object? Be specific.
+An awaitable
+object is a type that provides the GetAwaiter method, which returns an object that in turn pro-
+vides methods for running code and waiting for it to complete. The C# compiler converts your
+code into statements that use these methods to create an appropriate continuation.
+
+
+8. In a method definition, how do you create and run a Task and return a reference to the Task? What
+is the type of such a method? What does the method return?
+In the current implementation of the await operator, the awaitable object it expects you to 
+specify as the operand is a Task. This means that you must make some modifi cations to the doFirstLong-
+RunningOperation, doSecondLongRunningOperation, and doThirdLongRunningOperation methods. 
+Specifi cally, each method must now create and run a Task to perform its work and return a reference
+
+
+9. How do you define method calls in the implementation of an async method? Specifically, you must
+define a task, you must run the task, you must implement the task, and you must await the task.
+What is the syntax for doing this?
+
+
+
+10. What is the difference between decomposing a series of method calls that do not return values, and
+a series of method calls that return values? What is the Result property of a method that returns a
+value? How do you use the await operator in this circumstance?
+
+
+
+11. What is the difference between the await operator and the Wait method?
+
+
+
+
+
+
+
+

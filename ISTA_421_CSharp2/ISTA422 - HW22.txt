@@ -1,0 +1,87 @@
+-- Name: James Silcott
+-- File: C#
+-- Date: 30 Sept 2020
+
+
+Chapter 22
+1. Explain the difference between the concepts of associativity and precedence.
+Each operator has a precedence. For example, the * operator has a higher precedence than the
++ operator. This means that the expression a + b * c is the same as a + (b * c).
+
+Each operator also has an associativity that defi nes whether the operator evaluates from left 
+to right or from right to left. For example, the = operator is right-associative 
+(it evaluates from right to left), so a = b = c is the same as a = (b = c).
+
+
+You cannot change the precedence and associativity of an operator. Precedence and
+associativity are based on the operator symbol (for example, +) and not on the type (for example, int) on which the operator symbol is being used. Hence, the expression a + b * c is
+always the same as a + (b * c) regardless of the types of a, b, and c
+
+
+2. Explain the difference between the concepts of binary and unary operators.
+■ A unary operator is an operator that has just one operand. For example, the increment operator (++) is a unary operator.
+■ A binary operator is an operator that has two operands. For example, the multiplication opera-
+tor (*) is a binary operator.
+■ You cannot change the multiplicity (the number of operands) of an operator. For example, * 
+(the symbol for multiplication) is a binary operator. If you declare a * operator for your own type, it
+must be a binary operator.
+
+3. List four constraints imposed by C# with respect to operator overloading.
+
+1 All operators must be public.
+2 All operators must be static
+3 Operators are never polymorphic and cannot
+	use the virtual, abstract, override, or sealed modifi ers.
+	A binary operator (such as the + operator shown in this example) has two explicit arguments, and a unary operator has one explicit argument. (C++ programmers should note that operators
+	never have a hidden this parameter.)
+4 at least one of the
+	parameters must always be of the containing type
+
+4. What is the syntax for overloading operators? Discuss access, scope, return value types, and parameter
+types and multiplicity.
+
+ the keyword operator followed by the symbol for the operator being defined
+an overloaded operator has a return type and a parameter list
+
+5. What are symmetric overloaded binary operators and how do they differ from non-symmetric overloaded binary operators?
+
+Symmetric overloaded binary operators means that it doesn’t matter the order ofthe operands while non-symmetric requires the correct order of operands
+
+
+6. Can you overload compound assignment operators? If so, please state how you do so. If not, explain
+why not.
+a.Yes, but the assignment of the variables must align appropriately with the typed efined.
+b.Hour a = …
+c.Int b= …
+d.a+=a
+
+
+
+7. What is the difference between overloading increment and decrement operators for value types and
+reference types?
+
+a.There is a difference of when each increment and decrement is implemented
+
+
+8. Why do we overload some operators in pairs?
+a.Because the C# compiler requires us to have neither or both rule on some operatorssuch as != and ==. Having one without the other would leave missing logic
+
+
+
+9. What is the difference between widening conversion and narrowing conversion?
+a.Widening conversion is a conversion that has a wider value than the original, while a narrowing conversion is
+	a conversion that has a narrower value than the original.
+
+b.	Wide: 10 => 10.00
+	Narrow: 10.00=>10
+
+
+
+
+10. What is the difference between explicit conversion and implicit conversion?
+a.Implicit is done automatically by the compiler while explicit has to be manually called.
+
+
+
+
+

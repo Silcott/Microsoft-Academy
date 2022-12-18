@@ -1,0 +1,55 @@
+-- Name: James Silcott
+-- ISTA-AZ-204lab04-Silcott
+-- Date: Nov 3, 2020
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+string query = $@"SELECT VALUE products
+                    FROM models
+                    JOIN products in models.Products
+                    WHERE products.id = '{id}'";
+
+var iterator = _container.GetItemQueryIterator<Product>(query);
+
+List<Product> matches = new List<Product>();
+while (iterator.HasMoreResults)
+{
+    var next = await iterator.ReadNextAsync();
+    matches.AddRange(next);
+}
+
+return matches.SingleOrDefault();
+
+
+cd .\AdventureWorks.Context\
+
+dotnet build
+
+
+"ConnectionStrings": {
+    ...
+    "AdventureWorksCosmosContext": "",
+    ...
+},
+
+
+public void ConfigureProductService(IServiceCollection services)
+{
+    services.AddScoped<IAdventureWorksProductContext, AdventureWorksSqlContext>(provider =>
+        new AdventureWorksSqlContext(
+            _configuration.GetConnectionString(nameof(AdventureWorksSqlContext))
+        )
+    );
+}
+
+
+services.AddScoped<IAdventureWorksProductContext, AdventureWorksCosmosContext>(provider =>
+    new AdventureWorksCosmosContext(
+        _configuration.GetConnectionString(nameof(AdventureWorksCosmosContext))
+    )
+);
